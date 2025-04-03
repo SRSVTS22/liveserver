@@ -4,83 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" integrity="sha512-r6rDA7W6ZeQhvl8S7yRVQUKVHdexq+GAlNkNNqVC7YyIV+NwqCTJe2hDWCiffTyRNOeGEzRRJ9ifvRm/HCzGYg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         body { text-align: center; font-family: Arial, sans-serif; }
         video { width: 100%; max-width: 600px; border: 2px solid #000; }
         canvas { display: none; }
+        #controls { margin-top: 10px; }
         #errorMsg { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <h2>QR Code Scanner</h2>
-    <video id="video" autoplay playsinline></video>
-    <canvas id="canvas"></canvas>
-    <p id="errorMsg"></p>
+    <div style="width: 500px" id="reader"></div>
+
+    
 
     <h3>Scanned QR Code:</h3>
-    <p id="output">Waiting for QR code...</p>
+   
 
     <script>
-        const video = document.getElementById("video");
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
-        const output = document.getElementById("output");
-        const errorMsg = document.getElementById("errorMsg");
-
-        let videoStream = null;
-
-        async function startCamera() {
-            // Check if browser supports camera
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                errorMsg.textContent = "Error: Camera access is not supported on this browser.";
-                console.error("navigator.mediaDevices is not available");
-                return;
-            }
-
-            try {
-                videoStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
-                });
-
-                video.srcObject = videoStream;
-
-                video.onloadedmetadata = () => {
-                    scanQRCode();
-                };
-            } catch (error) {
-                console.error("Camera Access Error:", error);
-
-                if (error.name === "NotAllowedError") {
-                    errorMsg.textContent = "Error: Camera access was denied. Please allow camera permissions in your browser settings.";
-                } else if (error.name === "NotFoundError") {
-                    errorMsg.textContent = "Error: No camera found. Try connecting an external camera.";
-                } else if (error.name === "NotReadableError") {
-                    errorMsg.textContent = "Error: Camera is in use by another application.";
-                } else {
-                    errorMsg.textContent = "Error: Unable to access camera.";
-                }
-            }
+        function onScanSuccess(decodedText, decodedResult) {
+            // Handle on success condition with the decoded text or result.
+            console.log(`Scan result: ${decodedText}`, decodedResult);
+            //html5QrcodeScanner.clear();
         }
-
-        function scanQRCode() {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            setInterval(() => {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
-
-                if (qrCode) {
-                    output.textContent = `QR Code: ${qrCode.data}`;
-                }
-            }, 500);
-        }
-
-        startCamera();
-    </script>
+        
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);    </script>
 
 </body>
 </html>
