@@ -23,7 +23,7 @@
   }).catch(err => console.log("Camera access error: ", err));
 
   // Start scanning
-  document.getElementById("camera-select").addEventListener("click", function (e){
+  document.getElementById("camera-select").addEventListener("change", function (){
 
       selectedCameraId =this.value;
       html5QrCode.stop();
