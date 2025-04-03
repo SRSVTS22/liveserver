@@ -1,34 +1,52 @@
-<div id="qr-reader"></div>
-<input type="range" id="zoom-slider" min="1" max="10" step="0.1">
 
-<script src="./html5-qrcode-min.js"></script>
 
-<script>
-  let html5QrCode = new Html5Qrcode("qr-reader");
-  let selectedCameraId;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner with Zoom</title>
+    <script src="./html5-qrcode-min.js"></script>
+</head>
+<body>
 
-  // Populate camera selection dropdown
-  Html5Qrcode.getCameras().then(devices => {
-    if (devices.length > 0) {
-        let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back')) || -1; 
-      
-      selectedCameraId = backCamera.id; // Select the first camera by default
-    }
-  }).catch(err => console.log("Camera access error: ", err));
-
+    <h2>QR Scanner with Real-Time Zoom</h2>
+    
+    <div id="qr-reader" style="width: 300px; height: 300px;"></div>
+    
+    <label for="zoom">Zoom:</label>
+    <input type="range" id="zoom-slider" min="1" max="3" step="0.1" value="1">
  
+<script>
+    let html5QrCode = new Html5Qrcode("qr-reader");
+    let selectedCameraId;
   
-    html5QrCode.start(
-      selectedCameraId,
-      { fps: 10, qrbox: 250 },
-      (decodedText) => console.log(`Scanned: ${decodedText}`)
-    ).catch(err => console.log("Start scan error: ", err));
+    // Populate camera selection dropdown
+    Html5Qrcode.getCameras().then(devices => {
+      console.log(devices)
+      if (devices.length > 0) {
+          let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back'));
+          console.log(backCamera)
+        selectedCameraId = backCamera.id; // Select the first camera by default
+      }
+    }).catch(err => console.log("Camera access error: ", err));
   
+   
+    
+      html5QrCode.start(
+        selectedCameraId,
+        { fps: 10, qrbox: 250 },
+        (decodedText) => console.log(`Scanned: ${decodedText}`)
+      ).catch(err => console.log("Start scan error: ", err));
+    
+  
+    // Zoom slider functionality
+    document.getElementById("zoom-slider").addEventListener("input", (event) => {
+      const zoomValue = parseFloat(event.target.value);
+      html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomValue }] })
+        .catch(err => console.log("Zoom not supported:", err));
+    });
+  </script>
 
-  // Zoom slider functionality
-  document.getElementById("zoom-slider").addEventListener("input", (event) => {
-    const zoomValue = parseFloat(event.target.value);
-    html5QrCode.applyVideoConstraints({ advanced: [{ zoom: zoomValue }] })
-      .catch(err => console.log("Zoom not supported:", err));
-  });
-</script>
+</body>
+</html>
