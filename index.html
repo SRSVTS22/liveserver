@@ -43,10 +43,12 @@
                     useBarCodeDetectorIfSupported: true
                 },
                 videoConstraints: {
-                    zoom: currentZoom
+                    zoom: currentZoom,
+                    deviceId: { exact: cameraId } // Ensure the correct camera is used
+                    
                 }
             };
-
+            console.log("Starting Camera:", cameraId);
             html5QrCode.start(
                 cameraId,
                 config,
