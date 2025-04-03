@@ -1,9 +1,8 @@
 <div id="qr-reader"></div>
-<button id="start-scan">Start Scan</button>
-<select id="camera-select"></select>
 <input type="range" id="zoom-slider" min="1" max="10" step="0.1">
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="./html5-qrcode-min.js"></script>
+
 <script>
   let html5QrCode = new Html5Qrcode("qr-reader");
   let selectedCameraId;
@@ -11,30 +10,20 @@
   // Populate camera selection dropdown
   Html5Qrcode.getCameras().then(devices => {
     if (devices.length > 0) {
-      const cameraSelect = document.getElementById("camera-select");
-      devices.forEach(device => {
-        let option = document.createElement("option");
-        option.value = device.id;
-        option.text = device.label || `Camera ${cameraSelect.length + 1}`;
-        cameraSelect.appendChild(option);
-      });
-      selectedCameraId = devices[0].id; // Select the first camera by default
+        let backCamera = cameras.find(cam => cam.label.toLowerCase().includes('back')) || -1; 
+      
+      selectedCameraId = backCamera.id; // Select the first camera by default
     }
   }).catch(err => console.log("Camera access error: ", err));
 
-  // Start scanning
-  document.getElementById("camera-select").addEventListener("change", function (){
-
-      selectedCameraId =this.value;
-      html5QrCode.stop();
-    })
-  document.getElementById("start-scan").addEventListener("click", () => {
+ 
+  
     html5QrCode.start(
       selectedCameraId,
       { fps: 10, qrbox: 250 },
       (decodedText) => console.log(`Scanned: ${decodedText}`)
     ).catch(err => console.log("Start scan error: ", err));
-  });
+  
 
   // Zoom slider functionality
   document.getElementById("zoom-slider").addEventListener("input", (event) => {
