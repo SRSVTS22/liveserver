@@ -23,11 +23,33 @@
 
         function startScanner() {
             Html5Qrcode.getCameras().then(devices => {
-                console.log("Available Cameras:", devices);
+
                 if (devices.length > 0) {
-                    let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back'));
-                    cameraId = backCamera.id; // Select the first camera by default
-                    console.log(backCamera,cameraId)
+                console.log("Available Cameras:", devices);
+
+                // Find all back cameras
+                let backCameras = devices.filter(cam => cam.label.toLowerCase().includes('back'));
+            
+                // Prioritize the main back camera if possible
+                let mainBackCamera = backCameras.find(cam => 
+                    cam.label.toLowerCase().includes('main') || cam.label.toLowerCase().includes('0')
+                );
+            
+                // Use the main back camera if found, otherwise use the first back camera
+                cameraId = mainBackCamera ? mainBackCamera.id : (backCameras[0]?.id || devices[0]?.id);
+            
+                if (!cameraId) {
+                    console.error("No back camera found!");
+                    return;
+                }
+            
+                console.log("Using Camera:", cameraId);
+                
+
+                
+                //    let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back'));
+                  //  cameraId = backCamera.id; // Select the first camera by default
+//                    console.log(backCamera,cameraId)
                 }
                 html5QrCode = new Html5Qrcode("reader");
                 startCamera();
