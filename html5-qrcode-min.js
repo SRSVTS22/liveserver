@@ -19739,7 +19739,7 @@ var __Html5QrcodeLibrary__;
                 }
                 return (
                     (t.prototype.render = function (t, e) {
-                        (this.zoomElementContainer.style.display =  "block" ),
+                        (this.zoomElementContainer.style.display = e ? "block" :"none" ),
                             (this.zoomElementContainer.style.padding = "5px 10px"),
                             (this.zoomElementContainer.style.textAlign = "center"),
                             t.appendChild(this.zoomElementContainer),
