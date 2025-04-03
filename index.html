@@ -29,23 +29,7 @@
 
         function startScanner() {
             Html5Qrcode.getCameras().then(devices => {
-                const cameraSelect = document.getElementById("camera_ids");
-                cameraSelect.innerHTML = ""; // Clear existing options
-
-                if (devices.length === 0) {
-                    alert("No cameras found!");
-                    return;
-                }
-
-                // Populate camera dropdown
-                devices.forEach((device, index) => {
-                    let option = document.createElement("option");
-                    option.value = device.id;
-                    option.text = device.label || `Camera ${index + 1}`;
-                    cameraSelect.appendChild(option);
-                });
-
-                // Select default camera
+               
                 cameraId = devices[0].id; 
                 html5QrCode = new Html5Qrcode("reader");
 
@@ -93,7 +77,7 @@
         });
 
         // Change Camera on Selection
-        document.getElementById("camera_ids").addEventListener("change", (event) => {
+        document.getElementById("html5-qrcode-select-camera").addEventListener("change", (event) => {
             cameraId = event.target.value;
             console.log("Camera changed to:", cameraId);
             
@@ -106,4 +90,3 @@
 
 </body>
 </html>
-
