@@ -20,7 +20,8 @@
 <script>
     let html5QrCode = new Html5Qrcode("qr-reader");
     let selectedCameraId;
-  
+    let currentZoom = 1; // Default zoom
+    
     // Populate camera selection dropdown
     Html5Qrcode.getCameras().then(devices => {
       console.log(devices)
@@ -30,14 +31,26 @@
         selectedCameraId = backCamera.id; // Select the first camera by default
       }
     }).catch(err => console.log("Camera access error: ", err));
-  
+    const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+        videoConstraints: {
+            zoom: currentZoom
+        }
+    };
    
     
-      html5QrCode.start(
+    html5QrCode.start(
         selectedCameraId,
-        { fps: 10, qrbox: 250 },
-        (decodedText) => console.log(`Scanned: ${decodedText}`)
-      ).catch(err => console.log("Start scan error: ", err));
+        config,
+        qrCodeMessage => {
+            console.log("QR Code detected:", qrCodeMessage);
+        },
+        errorMessage => {
+            // Ignore scan errors
+        }
+    ).catch(err => console.error("Start error:", err));
     
   
     // Zoom slider functionality
