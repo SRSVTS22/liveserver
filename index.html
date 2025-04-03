@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Scanner with Zoom</title>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script> -->
-    <script src="./html5-qrcode-min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <script src="./html5-qrcode-min.js"></script>
 </head>
 <body>
 
@@ -17,6 +15,9 @@
     <label for="zoom">Zoom:</label>
     <input type="range" id="zoom-slider" min="1" max="3" step="0.1" value="1">
     
+    <label for="camera_ids">Select Camera:</label>
+    <select id="camera_ids"></select>
+
     <script>
         let html5QrCode;
         let cameraId = null;
@@ -24,12 +25,28 @@
 
         function startScanner() {
             Html5Qrcode.getCameras().then(devices => {
-                if (devices && devices.length) {
-                    cameraId = devices[0].id; // Select first camera
-                    html5QrCode = new Html5Qrcode("reader");
-                    startCamera();
+                console.log("Available Cameras:", devices);
+                const cameraSelect = document.getElementById("camera_ids");
+                cameraSelect.innerHTML = ""; // Clear previous options
+
+                if (devices.length === 0) {
+                    alert("No cameras found!");
+                    return;
                 }
-            }).catch(err => console.error("Camera error: ", err));
+
+                // Populate dropdown with available cameras
+                devices.forEach((device, index) => {
+                    const option = document.createElement("option");
+                    option.value = device.id;
+                    option.text = device.label || `Camera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Set default camera
+                cameraId = devices[0].id; 
+                html5QrCode = new Html5Qrcode("reader");
+                startCamera();
+            }).catch(err => console.error("Camera error:", err));
         }
 
         function startCamera() {
@@ -49,12 +66,12 @@
                 cameraId,
                 config,
                 qrCodeMessage => {
-                    console.log("QR Code detected: ", qrCodeMessage);
+                    console.log("QR Code detected:", qrCodeMessage);
                 },
                 errorMessage => {
                     // Ignore scan errors
                 }
-            ).catch(err => console.error("Start error: ", err));
+            ).catch(err => console.error("Start error:", err));
         }
 
         document.getElementById("zoom-slider").addEventListener("input", (event) => {
@@ -67,6 +84,12 @@
                 html5QrCode.applyVideoConstraints({ zoom: zoomLevel });
             }
         }
+
+        // Handle camera change
+        document.getElementById("camera_ids").addEventListener("change", (event) => {
+            cameraId = event.target.value;
+            html5QrCode.stop().then(() => startCamera()); // Restart scanner with new camera
+        });
 
         startScanner();
     </script>
