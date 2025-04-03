@@ -27,7 +27,7 @@
                 if (devices.length > 0) {
                     let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back'));
                     cameraId = backCamera.id; // Select the first camera by default
-                    console.log(backCamera,selectedCameraId)
+                    console.log(backCamera,cameraId)
                 }
                 html5QrCode = new Html5Qrcode("reader");
                 startCamera();
