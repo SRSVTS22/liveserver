@@ -10,7 +10,7 @@
   // Populate camera selection dropdown
   Html5Qrcode.getCameras().then(devices => {
     if (devices.length > 0) {
-        let backCamera = cameras.find(cam => cam.label.toLowerCase().includes('back')) || -1; 
+        let backCamera = devices.find(cam => cam.label.toLowerCase().includes('back')) || -1; 
       
       selectedCameraId = backCamera.id; // Select the first camera by default
     }
