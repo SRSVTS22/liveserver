@@ -24,6 +24,7 @@
 
   // Start scanning
   document.getElementById("start-scan").addEventListener("click", () => {
+    html5QrCode.stop();
     selectedCameraId = document.getElementById("camera-select").value;
     html5QrCode.start(
       selectedCameraId,
