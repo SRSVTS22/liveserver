@@ -55,6 +55,7 @@
         }
 
         function startCamera() {
+            console.log("Camera ID : ",cameraId);
             const config = {
                 fps: 10,
                 qrbox: { width: 250, height: 250 },
@@ -94,6 +95,8 @@
         // Change Camera on Selection
         document.getElementById("camera_ids").addEventListener("change", (event) => {
             cameraId = event.target.value;
+            console.log("Camera changed to:", cameraId);
+            
             html5QrCode.stop().then(() => startCamera()); // Restart scanner with new camera
         });
 
@@ -103,3 +106,4 @@
 
 </body>
 </html>
+
